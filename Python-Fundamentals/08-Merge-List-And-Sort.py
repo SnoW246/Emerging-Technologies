@@ -1,4 +1,4 @@
-#Problem Set 7
+#Problem Set 8
 #Adrian Golias
 
 #Initialization of two sorted list arrays with initial element values
