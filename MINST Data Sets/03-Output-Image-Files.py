@@ -3,7 +3,8 @@
 
 # Importing libraries
 import gzip
-import binascii
+import numpy as np
+import PIL.Image as pilImage
 
 # A function to read the labels from defined file location
 def read_labels_from_file(filename):
@@ -70,7 +71,7 @@ def read_images_from_file(filename):
                 rows.append(cols)
 			# Append rows in the image 
             images.append(rows)
-			
+		
 		# Return image
         return images
 
@@ -80,15 +81,32 @@ test_labels = read_labels_from_file('data/t10k-labels-idx1-ubyte.gz')
 train_images = read_images_from_file('data/train-images-idx3-ubyte.gz')
 test_images = read_images_from_file('data/t10k-images-idx3-ubyte.gz')
 
-# Outputing third image in the training set to the console
-# Done by representing any pixel value less than 128 as a 
-# full stop and any other pixel value as a hash symbol.
-# Should output # 2
-# Loop structure to itterate through every row of each training image
-for row in train_images[4999]:
-	# Loop structure to itterate through each column of that row
-	for col in row:
-		# For every 128th column output '#' symbol, otherwise output '.' symbol
-		print('.' if col <= 127 else '#', end='')
-	# Output image to conole
-	print()
+# Function to print out image from the data set
+def print_image(image):
+	# Loop structure to itterate through each row of the image
+    for row in image:
+		# Loop structure to itterate through each column of that row
+        for col in row:
+			# For every 128th column output '#' symbol, otherwise output '.' symbol
+            print('.' if col < 128 else '#', end='')
+		# Output image
+        print()
+
+# Function to output images as .png files to defined directory
+def save_image(image, tag, index, label):
+    target = "Data/Images/%s-%05d-%d.png"
+    pixels = np.array(image)
+    img = pilImage.fromarray(pixels.astype('uint8'))
+    img.save(target % (tag, index, label))
+	
+# Test
+print_image(train_images[2])
+
+# Loop structure to itterate through all of the train images and output them into 
+# correspondant files with .png extension 
+for i in range(len(train_images)):
+    save_image(train_images[i], 'train', (i+1), train_labels[i])
+# Loop structure to itterate through all of the test images and output them into 
+# correspondant files with .png extension 
+for i in range(len(test_images)):
+    save_image(test_images[i], 'test', (i+1), test_labels[i])
